@@ -1,8 +1,8 @@
 pkgbase = demjson
 	pkgdesc = Encoder, decoder, and lint/validator for JSON (JavaScript Object Notation) compliant with RFC 7159
 	pkgver = 2.2.4
-	pkgrel = 2
-	url = http://deron.meranda.us/python/demjson/
+	pkgrel = 3
+	url = https://github.com/dmeranda/demjson
 	arch = any
 	license = LGPL
 	makedepends = python-setuptools
