@@ -1,41 +1,40 @@
 diff --git a/src/xfce-screensaver.c b/src/xfce-screensaver.c
-index 5b83f2ae..135807cd 100644
+index fecfd987..2090e922 100644
 --- a/src/xfce-screensaver.c
 +++ b/src/xfce-screensaver.c
-@@ -364,7 +364,7 @@ xfce_screensaver_new (void)
-     return XFCE_SCREENSAVER (saver);
+@@ -367,7 +367,7 @@ xfce_screensaver_new (void)
+   return XFCE_SCREENSAVER (saver);
  }
  
 -static gboolean
 +gboolean
  xfce_reset_screen_saver (XfceScreenSaver *saver)
  {
-     TRACE("entering");
+   TRACE("entering");
 diff --git a/src/xfce-screensaver.h b/src/xfce-screensaver.h
-index 260e1c20..86a56245 100644
+index 5866c290..4955cef9 100644
 --- a/src/xfce-screensaver.h
 +++ b/src/xfce-screensaver.h
-@@ -46,6 +46,8 @@ GType            xfce_screensaver_get_type      (void) G_GNUC_CONST;
+@@ -44,6 +44,7 @@ typedef struct
  
+ GType            xfce_screensaver_get_type      (void) G_GNUC_CONST;
  XfceScreenSaver *xfce_screensaver_new           (void);
- 
 +gboolean         xfce_reset_screen_saver        (XfceScreenSaver *saver);
-+
  void             xfce_screensaver_inhibit       (XfceScreenSaver *saver,
                                                   gboolean suspend);
- 
+ gboolean         xfce_screensaver_lock          (XfceScreenSaver *saver);
 diff --git a/src/xfpm-manager.c b/src/xfpm-manager.c
-index 88231f3b..ac10c9c9 100644
+index e9acaa0f..8a468c55 100644
 --- a/src/xfpm-manager.c
 +++ b/src/xfpm-manager.c
-@@ -579,6 +579,10 @@ static void
+@@ -578,6 +578,10 @@ static void
  xfpm_manager_on_battery_changed_cb (XfpmPower *power, gboolean on_battery, XfpmManager *manager)
  {
-     egg_idletime_alarm_reset_all (manager->priv->idle);
-+    // If we've already been idle for longer than the new power state's
-+    // inactivity sleep timeout, the configured sleep mode will not be
-+    // activated. Work around this by treating the change as user activity.
-+    xfce_reset_screen_saver (manager->priv->screensaver);
+   egg_idletime_alarm_reset_all (manager->priv->idle);
++  // If we've already been idle for longer than the new power state's inactivity
++  // sleep timeout, the configured sleep mode will not be activated. Work around
++  // this by treating the change as user activity.
++  xfce_reset_screen_saver (manager->priv->screensaver);
  }
  
  static void
