@@ -1,0 +1,38 @@
+# Maintainer: Luke Arms <luke@arms.to>
+# Contributor: Gaetan Bisson <bisson@archlinux.org>
+# Contributor: Tobias Powalowski <tpowa@archlinux.org>
+
+pkgname=unison-lk
+pkgver=2.51.3
+pkgrel=1
+pkgdesc='File-synchronization tool'
+url='https://www.cis.upenn.edu/~bcpierce/unison/'
+arch=('x86_64')
+license=('GPL2')
+makedepends=('ocaml>=4.11.0')
+provides=('unison')
+conflicts=('unison')
+source=("https://github.com/bcpierce00/unison/archive/v${pkgver}.tar.gz")
+sha256sums=('0c287d17f52729440b2bdc28edf4d19b2d5ea5869983d78e780d501c5866914b')
+options=('!makeflags')
+
+build() {
+	cd "${srcdir}/${pkgname%-lk}-${pkgver}"
+	for ui in text; do
+		cp -a . build || true
+		pushd build
+		export CFLAGS=
+		make all UISTYLE=$ui DEBUGGING=false THREADS=true
+		mv src/unison src/unison-$ui
+		mv src/unison-* ..
+		popd
+		rm -fr build
+	done
+}
+
+package() {
+	cd "${srcdir}/${pkgname%-lk}-${pkgver}"
+	install -d "${pkgdir}"/usr/bin
+	install -m755 unison-* "${pkgdir}"/usr/bin
+	ln -s unison-text "${pkgdir}"/usr/bin/unison
+}
