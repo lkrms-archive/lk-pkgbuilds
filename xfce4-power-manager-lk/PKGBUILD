@@ -5,13 +5,13 @@
 pkgname=xfce4-power-manager-lk
 _pkgname=xfce4-power-manager
 pkgver=4.16.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Power manager for Xfce desktop"
 arch=('x86_64')
 url="https://www.xfce.org/"
 license=('GPL2')
 groups=('xfce4')
-depends=('libxfce4ui' 'upower' 'libnotify' 'hicolor-icon-theme')
+depends=('libxfce4ui' 'upower' 'libnotify' 'xfce4-notifyd' 'hicolor-icon-theme')
 optdepends=('xfce4-panel: for the Xfce panel plugin')
 makedepends=('intltool' 'xfce4-panel')
 provides=('xfce4-power-manager')

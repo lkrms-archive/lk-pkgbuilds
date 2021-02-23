@@ -1,24 +1,33 @@
 #!/bin/bash
 
 set -euo pipefail
+shopt -s nullglob
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
+if [ $# -eq 0 ]; then
+    cd "$(dirname "${BASH_SOURCE[0]}")"
+    set -- */PKGBUILD
+    if [ $# -eq 0 ]; then
+        echo "Nothing to build" >&2
+        exit 1
+    fi
+fi
 
-PKGBUILDS=("$@")
-
-[ $# -gt 0 ] ||
-    PKGBUILDS=(*/PKGBUILD)
-
-[ ${#PKGBUILDS[@]} -gt 0 ] || exit
-
-for PKGBUILD in "${PKGBUILDS[@]}"; do
-    # update pkgver before generating SRCINFO files
-    pushd "$(dirname "$PKGBUILD")" >/dev/null &&
-        makepkg --cleanbuild --nobuild --syncdeps --noconfirm &&
-        makepkg --printsrcinfo >.SRCINFO || exit
-    popd >/dev/null
+for PKGBUILD in "$@"; do
+    # Update pkgver before generating SRCINFO files
+    (cd "$(dirname "$PKGBUILD")" &&
+        makepkg --syncdeps --noconfirm --nobuild &&
+        makepkg --printsrcinfo >.SRCINFO)
 done
 
-QUEUE_FILE=$(mktemp)
-cat -- "${PKGBUILDS[@]//PKGBUILD/.SRCINFO}" | aur graph | tsort | tac >"$QUEUE_FILE"
-aur build -d lk-aur -a "$QUEUE_FILE" --noconfirm --force --clean
+if type -P aur >/dev/null; then
+    QUEUE=$(mktemp)
+    aur graph "${@/PKGBUILD/.SRCINFO}" | tsort | tac >"$QUEUE"
+    aur build --database lk --noconfirm --force \
+        --chroot --makepkg-conf=/etc/makepkg.conf \
+        --arg-file "$QUEUE"
+    rm -f "$QUEUE"
+else
+    printf '%s\n' "" \
+        "aur: command not found" \
+        "Please install aurutils and try again" >&2
+fi
