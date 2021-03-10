@@ -4,7 +4,18 @@ set -euo pipefail
 shopt -s nullglob
 
 PREPARE=
-[[ ! ${1:-} =~ ^(--)?prepare$ ]] || PREPARE=1
+FORCE=
+while [ $# -gt 0 ]; do
+    case "${1#--}" in
+    prepare)
+        PREPARE=1
+        ;;
+    force)
+        FORCE=1
+        ;;
+    esac
+    shift
+done
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 set -- */PKGBUILD
@@ -23,7 +34,7 @@ if [ -n "$PREPARE" ]; then
 elif type -P aur >/dev/null; then
     QUEUE=$(mktemp)
     aur graph "${@/PKGBUILD/.SRCINFO}" | tsort | tac >"$QUEUE"
-    aur build --database lk --noconfirm --force \
+    aur build --database lk --noconfirm ${FORCE:+--force} \
         --chroot --makepkg-conf=/etc/makepkg.conf \
         --arg-file "$QUEUE"
     rm -f "$QUEUE"
