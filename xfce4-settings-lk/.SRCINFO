@@ -1,0 +1,30 @@
+pkgbase = xfce4-settings-lk
+	pkgdesc = Settings manager of the Xfce desktop
+	pkgver = 4.16.0
+	pkgrel = 1
+	url = https://www.xfce.org/
+	arch = x86_64
+	groups = xfce4
+	license = GPL2
+	makedepends = intltool
+	makedepends = xf86-input-libinput
+	depends = exo
+	depends = garcon
+	depends = libxfce4ui
+	depends = xfconf
+	depends = libnotify
+	depends = libcanberra
+	depends = colord
+	depends = libxklavier
+	depends = adwaita-icon-theme
+	depends = gnome-themes-extra
+	optdepends = python: xfce4-compose-mail -- "mailto:" URI handling
+	provides = xfce4-settings
+	conflicts = xfce4-settings
+	source = https://archive.xfce.org/src/xfce/xfce4-settings/4.16/xfce4-settings-4.16.0.tar.bz2
+	source = default-xsettings-xml.patch
+	sha256sums = 67a1404fc754c675c6431e22a8fe0e5d79644fdfadbfe25a4523d68e1442ddc2
+	sha256sums = 8e9a6c70ab0ceb5d91b637dc290768f8a47edb5d7b6e2eebc4459dbc4ee040d7
+
+pkgname = xfce4-settings-lk
+
