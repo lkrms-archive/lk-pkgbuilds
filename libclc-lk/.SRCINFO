@@ -12,6 +12,8 @@ pkgbase = libclc-lk
 	makedepends = python
 	makedepends = git
 	makedepends = spirv-llvm-translator
+	provides = libclc
+	conflicts = libclc
 	source = git+https://github.com/llvm/llvm-project.git#tag=llvmorg-12.0.0
 	source = gfx908+.patch
 	md5sums = SKIP

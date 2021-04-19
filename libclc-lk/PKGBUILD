@@ -4,13 +4,15 @@
 pkgname=libclc-lk
 _pkgname=libclc
 pkgver=12.0.0
-pkgrel=1
+pkgrel=2
 pkgdesc="Library requirements of the OpenCL C programming language"
 arch=('any')
 url="https://libclc.llvm.org/"
 license=('MIT')
 makedepends=('clang' 'llvm' 'cmake' 'ninja' 'python' 'git'
     'spirv-llvm-translator')
+provides=("$_pkgname")
+conflicts=("$_pkgname")
 source=("git+https://github.com/llvm/llvm-project.git#tag=llvmorg-$pkgver"
     gfx908+.patch)
 md5sums=('SKIP'
