@@ -1,0 +1,13 @@
+diff --git a/libclc/CMakeLists.txt b/libclc/CMakeLists.txt
+index b8b5ceff086c..78f9995e6f1f 100644
+--- a/libclc/CMakeLists.txt
++++ b/libclc/CMakeLists.txt
+@@ -167,7 +167,7 @@ endif()
+ 
+ # Support for Vega12 and Vega20 was added in LLVM 7 (r331215)
+ if( ${LLVM_VERSION} VERSION_GREATER "6.99.99" )
+-	set( tahiti_aliases ${tahiti_aliases} gfx904 gfx906 )
++	set( tahiti_aliases ${tahiti_aliases} gfx904 gfx906 gfx908 gfx909 gfx90a gfx90c )
+ endif()
+ 
+ # pkg-config file
