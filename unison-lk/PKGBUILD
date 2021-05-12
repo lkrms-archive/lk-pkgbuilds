@@ -4,35 +4,38 @@
 
 pkgname=unison-lk
 pkgver=2.51.3
-pkgrel=1
+pkgrel=2
 pkgdesc='File-synchronization tool'
 url='https://www.cis.upenn.edu/~bcpierce/unison/'
 arch=('x86_64')
 license=('GPL2')
-makedepends=('ocaml>=4.11.0')
-provides=('unison')
+makedepends=('ocaml>=4.12.0')
+provides=("unison=${pkgver}")
 conflicts=('unison')
-source=("https://github.com/bcpierce00/unison/archive/v${pkgver}.tar.gz")
-sha256sums=('0c287d17f52729440b2bdc28edf4d19b2d5ea5869983d78e780d501c5866914b')
+source=("https://github.com/bcpierce00/unison/archive/v${pkgver}.tar.gz"
+    'https://github.com/bcpierce00/unison/commit/14b885316e0a4b41cb80fe3daef7950f88be5c8f.patch')
+sha256sums=('0c287d17f52729440b2bdc28edf4d19b2d5ea5869983d78e780d501c5866914b'
+    '6501de66528d8d15c9f8581c0fda0fa88859f9969ecf564609aeca698f76d7bf')
 options=('!makeflags')
 
 build() {
-	cd "${srcdir}/${pkgname%-lk}-${pkgver}"
-	for ui in text; do
-		cp -a . build || true
-		pushd build
-		export CFLAGS=
-		make all UISTYLE=$ui DEBUGGING=false THREADS=true
-		mv src/unison src/unison-$ui
-		mv src/unison-* ..
-		popd
-		rm -fr build
-	done
+    cd "${srcdir}/${pkgname%-lk}-${pkgver}"
+    patch -p1 -i "${srcdir}/14b885316e0a4b41cb80fe3daef7950f88be5c8f.patch"
+    for ui in text; do
+        cp -a . build || true
+        pushd build
+        export CFLAGS=
+        make all UISTYLE=$ui DEBUGGING=false THREADS=true
+        mv src/unison src/unison-$ui
+        mv src/unison-* ..
+        popd
+        rm -fr build
+    done
 }
 
 package() {
-	cd "${srcdir}/${pkgname%-lk}-${pkgver}"
-	install -d "${pkgdir}"/usr/bin
-	install -m755 unison-* "${pkgdir}"/usr/bin
-	ln -s unison-text "${pkgdir}"/usr/bin/unison
+    cd "${srcdir}/${pkgname%-lk}-${pkgver}"
+    install -d "${pkgdir}"/usr/bin
+    install -m755 unison-* "${pkgdir}"/usr/bin
+    ln -s unison-text "${pkgdir}"/usr/bin/unison
 }

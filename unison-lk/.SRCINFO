@@ -1,16 +1,18 @@
 pkgbase = unison-lk
 	pkgdesc = File-synchronization tool
 	pkgver = 2.51.3
-	pkgrel = 1
+	pkgrel = 2
 	url = https://www.cis.upenn.edu/~bcpierce/unison/
 	arch = x86_64
 	license = GPL2
-	makedepends = ocaml>=4.11.0
-	provides = unison
+	makedepends = ocaml>=4.12.0
+	provides = unison=2.51.3
 	conflicts = unison
 	options = !makeflags
 	source = https://github.com/bcpierce00/unison/archive/v2.51.3.tar.gz
+	source = https://github.com/bcpierce00/unison/commit/14b885316e0a4b41cb80fe3daef7950f88be5c8f.patch
 	sha256sums = 0c287d17f52729440b2bdc28edf4d19b2d5ea5869983d78e780d501c5866914b
+	sha256sums = 6501de66528d8d15c9f8581c0fda0fa88859f9969ecf564609aeca698f76d7bf
 
 pkgname = unison-lk
 
