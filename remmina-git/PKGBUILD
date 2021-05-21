@@ -1,0 +1,73 @@
+# Maintainer: Matt Rhoades <dev@rhoatech.com>
+# Contributor: Christian Hesse <mail@eworm.de>
+# Contributor: Sergej Pupykin <pupykin.s+arch@gmail.com> ([community] package)
+
+pkgname=remmina-git
+pkgver=1.4.16.r38.ga650d58d8
+pkgrel=1
+pkgdesc='A remote desktop client written in GTK+ - git checkout'
+arch=(i686 x86_64)
+url='http://www.remmina.org/'
+license=('GPL')
+depends=('gtk2' 'zlib' 'libjpeg' 'libssh' 'avahi' 'vte3'
+	'libgcrypt' 'libxdmcp' 'libgnome-keyring' 'libvncserver'
+	'libsecret' 'webkit2gtk' 'libsodium')
+makedepends=('git' 'intltool' 'pkgconfig' 'cmake'
+	'avahi' 'libxkbfile' 'freerdp-git' 'telepathy-glib' 'gobject-introspection' 'spice' 'spice-gtk' 'spice-protocol')
+optdepends=('avahi' 'libxkbfile' 'telepathy-glib' 'gobject-introspection' 'spice' 'spice-gtk' 'spice-protocol')
+replaces=('remmina-plugins')
+provides=('remmina' 'grdc' "grdc=${pkgver}" 'remmina-plugins')
+conflicts=('remmina' 'grdc')
+install=remmina.install
+source=('git+https://gitlab.com/remmina/remmina.git')
+sha256sums=('SKIP')
+
+pkgver() {
+	cd remmina/
+
+	if GITTAG="$(git describe --abbrev=0 --tags 2>/dev/null)"; then
+		printf '%s.r%s.g%s' \
+			"$(sed -e "s/^${pkgname%%-git}//" -e 's/^[-_/a-zA-Z]\+//' -e 's/[-_+]/./g' <<< ${GITTAG})" \
+			"$(git rev-list --count ${GITTAG}..)" \
+			"$(git rev-parse --short HEAD)"
+	else
+		printf '0.r%s.g%s' \
+			"$(git rev-list --count master)" \
+			"$(git rev-parse --short HEAD)"
+	fi
+}
+
+build() {
+	cd remmina/
+
+    patch -p1 <<"EOF"
+diff --git a/plugins/rdp/rdp_plugin.c b/plugins/rdp/rdp_plugin.c
+index cadb36557..327a476e1 100644
+--- a/plugins/rdp/rdp_plugin.c
++++ b/plugins/rdp/rdp_plugin.c
+@@ -2803,7 +2803,7 @@ G_MODULE_EXPORT gboolean remmina_plugin_entry(RemminaPluginService *service)
+ 	snprintf(remmina_plugin_rdp_version, sizeof(remmina_plugin_rdp_version),
+ 		 "RDP plugin: %s (Git %s), Compiled with libfreerdp %s (%s), Running with libfreerdp %s (rev %s), H.264 %s",
+ 		 VERSION, REMMINA_GIT_REVISION,
+-		 FREERDP_VERSION_FULL, GIT_REVISION,
++		 FREERDP_VERSION_FULL, FREERDP_GIT_REVISION,
+ 		 freerdp_get_version_string(),
+ 		 freerdp_get_build_revision(),
+ 		 gfx_h264_available ? "Yes" : "No"
+EOF
+
+	cmake \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+		-DWITH_APPINDICATOR=OFF \
+        -DWITH_FREERDP3=ON \
+		.
+	make
+}
+
+package() {
+	cd remmina/
+
+	make DESTDIR="${pkgdir}/" install
+}
+
