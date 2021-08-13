@@ -1,8 +1,8 @@
 pkgbase = xfce4-power-manager-lk
-	pkgdesc = Power manager for Xfce desktop
+	pkgdesc = Power manager for the Xfce desktop
 	pkgver = 4.16.0
-	pkgrel = 2
-	url = https://www.xfce.org/
+	pkgrel = 3
+	url = https://docs.xfce.org/xfce/xfce4-power-manager/start
 	arch = x86_64
 	groups = xfce4
 	license = GPL2
@@ -22,4 +22,3 @@ pkgbase = xfce4-power-manager-lk
 	sha256sums = 8cb869d95587f048bee8d03ccafa5a4bc7c0e761815972c66ccc4c07e69ad436
 
 pkgname = xfce4-power-manager-lk
-
