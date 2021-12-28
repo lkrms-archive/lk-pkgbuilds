@@ -1,0 +1,18 @@
+pkgbase = dbeaver-plugin-sshj-lib-lk
+	pkgdesc = SSHv2 library for Java for DBeaver plugin for SSHv2 tunnels
+	pkgver = 0.27.4
+	pkgrel = 1
+	url = https://dbeaver.io/
+	arch = any
+	license = Apache
+	makedepends = unzip
+	depends = dbeaver-plugin-bouncycastle
+	provides = dbeaver-plugin-sshj-lib=0.27.4
+	conflicts = dbeaver-plugin-sshj-lib
+	noextract = org.jkiss.bundle.sshj_0.27.4.jar
+	source = https://dbeaver.io/update/ce/latest/plugins/org.jkiss.bundle.sshj_0.27.4.jar
+	source = dbeaver-plugin-sshj-lib.info
+	sha256sums = 906d978bef967e315e8ee791dafd46cd44e363b51b7a7a0e56b0724a26ba877d
+	sha256sums = 1aa03c3b6902aa89ed12675b07435ca26c437b75e451b966cf2095acf240b199
+
+pkgname = dbeaver-plugin-sshj-lib-lk
