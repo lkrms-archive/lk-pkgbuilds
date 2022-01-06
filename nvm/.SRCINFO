@@ -1,0 +1,19 @@
+pkgbase = nvm
+	pkgdesc = Node Version Manager - Simple bash script to manage multiple active node.js versions
+	pkgver = 0.39.1
+	pkgrel = 2
+	url = https://github.com/nvm-sh/nvm
+	install = nvm.install
+	arch = any
+	license = MIT
+	optdepends = bash: bash completion
+	source = nvm-0.39.1.tar.gz::https://github.com/nvm-sh/nvm/archive/v0.39.1.tar.gz
+	source = init-nvm.sh
+	source = install-nvm-exec
+	source = fix-nvm-install-with-errtrace.patch
+	sha256sums = 4b6f6af05f94839b1116d661adb7d3af4ac17a7f10c280cdf84be084c7ab3b61
+	sha256sums = 692317bfd036557f59543fef9b67ff38de68208d30361fe385291f58d3ac0425
+	sha256sums = 795d3f6ad3076aa4b0bb9cc48a2e6e79331d121278a887667fb707181a54a10b
+	sha256sums = 68fd27434b5854a79ab7e74253e86d14b480c539c02f931bfbec53564b9ec609
+
+pkgname = nvm

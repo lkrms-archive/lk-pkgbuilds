@@ -1,0 +1,97 @@
+diff --git a/nvm.sh b/nvm.sh
+index 62c5946f..bcf9a3a7 100644
+--- a/nvm.sh
++++ b/nvm.sh
+@@ -1844,6 +1844,7 @@ nvm_get_arch() {
+   local HOST_ARCH
+   local NVM_OS
+   local EXIT_CODE
++  local L
+ 
+   NVM_OS="$(nvm_get_os)"
+   # If the OS is SunOS, first try to use pkgsrc to guess
+@@ -1870,9 +1871,11 @@ nvm_get_arch() {
+     *) NVM_ARCH="${HOST_ARCH}" ;;
+   esac
+ 
+-  # If running a 64bit ARM kernel but a 32bit ARM userland, change ARCH to 32bit ARM (armv7l)
+-  L=$(ls -dl /sbin/init 2>/dev/null) # if /sbin/init is 32bit executable
+-  if [ "$(uname)" = "Linux" ] && [ "${NVM_ARCH}" = arm64 ] && [ "$(od -An -t x1 -j 4 -N 1 "${L#*-> }")" = ' 01' ]; then
++  # If running a 64bit ARM kernel but a 32bit ARM userland,
++  # change ARCH to 32bit ARM (armv7l) if /sbin/init is 32bit executable
++  if [ "$(uname)" = "Linux" ] && [ "${NVM_ARCH}" = arm64 ] &&
++    L="$(ls -dl /sbin/init 2>/dev/null)" &&
++    [ "$(od -An -t x1 -j 4 -N 1 "${L#*-> }")" = ' 01' ]; then
+     NVM_ARCH=armv7l
+     HOST_ARCH=armv7l
+   fi
+@@ -2723,6 +2726,13 @@ nvm() {
+     EXIT_CODE="$?"
+     set -a
+     return "$EXIT_CODE"
++  elif [ -n "${BASH-}" ] && [ "${-#*E}" != "$-" ]; then
++    set +E
++    local EXIT_CODE
++    IFS="${DEFAULT_IFS}" nvm "$@"
++    EXIT_CODE="$?"
++    set -E
++    return "$EXIT_CODE"
+   elif [ "${IFS}" != "${DEFAULT_IFS}" ]; then
+     IFS="${DEFAULT_IFS}" nvm "$@"
+     return "$?"
+diff --git a/test/installation_node/install on bash with ERR trap and set -E b/test/installation_node/install on bash with ERR trap and set -E
+new file mode 100755
+index 00000000..edfad0c6
+--- /dev/null
++++ b/test/installation_node/install on bash with ERR trap and set -E	
+@@ -0,0 +1,50 @@
++#!/bin/sh
++
++set -e
++
++cleanup() {
++  nvm cache clear
++  nvm deactivate
++  rm -rf "${NVM_DIR}"/v*
++  nvm unalias default
++}
++
++die() {
++  echo "$@"
++  cleanup || true
++  exit 1
++}
++
++\. ../../nvm.sh
++
++if [ -z "${BASH-}" ]; then
++  echo "This test only applies to Bash; skipping"
++  exit
++fi
++
++cleanup || true
++trap 'echo "==> EXIT signal received (status: $?)"; cleanup' EXIT
++
++# shellcheck disable=SC3047
++trap 'echo "==> ERR signal received"; exit 1' ERR
++# shellcheck disable=SC3041
++set -E
++
++# shellcheck disable=SC3045,SC3047
++ERR_TRAP_EXPECTED="$(trap -p ERR)"
++
++# Adding ` || die 'install failed'` implicitly disables error handling and
++# prevents ERR trap execution, so for the purposes of this test, `nvm install`
++# can't be part of another command or statement
++nvm install node
++
++case "$-" in
++*E*)
++  # shellcheck disable=SC3045,SC3047
++  [ "$(trap -p ERR)" = "$ERR_TRAP_EXPECTED" ] ||
++    die "ERR trap not restored after \"nvm install $VERSION\""
++  ;;
++*)
++  die "errtrace not restored after \"nvm install $VERSION\""
++  ;;
++esac
