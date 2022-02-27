@@ -2,7 +2,7 @@
 # Maintainer: Jaime Martínez Rincón <jaime(at)jamezrin(dot)name>
 
 pkgname=httptoolkit
-pkgver=1.5.1
+pkgver=1.7.0
 pkgrel=2
 epoch=1
 pkgdesc="Beautiful, cross-platform & open-source HTTP(S) proxy, analyzer and client."
@@ -27,7 +27,9 @@ noextract=()
 md5sums=('SKIP'
     'faf640796c9ad59c3fe56dac09b19767')
 validpgpkeys=()
-_node_version=14
+
+# ci.yml specifies node 14, but lockfileVersion@2 implies npm 7 / node 15
+_node_version=15
 
 _ensure_local_nvm() {
     if type nvm &>/dev/null; then
@@ -44,9 +46,8 @@ prepare() {
     _ensure_local_nvm
     nvm ls "$_node_version" &>/dev/null ||
         nvm install "$_node_version"
-    nvm exec "$_node_version" npm install \
-        electron@"$(cat /usr/lib/electron14/version)" \
-        node-abi@latest
+    nvm exec "$_node_version" \
+        npm install --no-save --no-audit --no-progress --no-fund
 }
 
 build() {
