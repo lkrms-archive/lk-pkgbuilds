@@ -1,27 +1,24 @@
 pkgname=devilspie2-lk
 _pkgname=devilspie2
-pkgver=0.43
+pkgver=0.44
 pkgrel=1
 pkgdesc="A window matching utility, allowing the user to perform scripted actions on windows as they are created."
 arch=('i686' 'x86_64')
 url="http://www.nongnu.org/$_pkgname/"
 license=('GPL3')
 depends=('lua>=5.1' 'gtk3' 'libwnck3')
-source=("http://download.savannah.nongnu.org/releases/$_pkgname/${_pkgname}_$pkgver-src.tar.gz"{,.asc}
-    "$_pkgname-0.43-lua-5.4.patch"
-    "$_pkgname-0.43-threads.patch")
-md5sums=('26eed0b5b4af5c7e13c551eceaeab832'
+source=("http://download.savannah.nongnu.org/releases/$_pkgname/${_pkgname}-$pkgver.tar.xz"{,.sig}
+    'devilspie2-0.44-threads.patch')
+sha256sums=('0a9f1eadd2b22a318163e4180065d495221ba1a43ad2021ea6866cd118042640'
     'SKIP'
-    '8fd96127706934b138af50aaa2da0664'
-    '241b8d943c69ff33657b313dd8a9e758')
-validpgpkeys=('DB306E4B10FFD98EF4DB55D7194B631AB2DA2888') # Andreas Rönnquist <gusnan@gusnan.se>
+    '0840bb368fff59601607ccac0b14614aaf8ab2f0b73cb90abe0cd02fa4cce1c4')
+validpgpkeys=('A523530DD1E9FDDFAD3D5FCAA9B57A926EF302F5') # Darren Salt <devspam@moreofthesa.me.uk>
 provides=("$_pkgname")
 conflicts=("$_pkgname")
 
 prepare() {
     cd "$_pkgname-$pkgver"
-    patch -p1 -i "$srcdir/$_pkgname-0.43-lua-5.4.patch"
-    patch -p1 -i "$srcdir/$_pkgname-0.43-threads.patch"
+    patch -p1 -i "$srcdir/$_pkgname-0.44-threads.patch"
 }
 
 build() {
