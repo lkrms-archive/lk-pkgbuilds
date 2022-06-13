@@ -3,7 +3,7 @@
 
 pkgbase='ocaml-lk'
 pkgname=('ocaml-lk' 'ocaml-compiler-libs-lk')
-pkgver=4.12.0
+pkgver=4.12.1
 pkgrel=1
 pkgdesc="A functional language with OO extensions"
 arch=('x86_64')
@@ -11,14 +11,20 @@ license=('LGPL2.1' 'custom: QPL-1.0')
 url="https://caml.inria.fr/"
 makedepends=('ncurses')
 optdepends=('ncurses: advanced ncurses features' 'tk: advanced tk features')
-provides=("ocaml=${pkgver}")
+provides=('ocaml')
 conflicts=('ocaml')
-source=(https://caml.inria.fr/distrib/ocaml-${pkgver%.*}/${pkgbase%-lk}-${pkgver}.tar.xz)
-sha512sums=('fff347398300097e32dcdd0fabfa158693e3d27d4b0fef23a564be4993950be374e3e436205e621485f4188ab007e489c50b1294e1999dac36312e56ec5b52c9')
+source=("https://caml.inria.fr/distrib/ocaml-${pkgver%.*}/${pkgbase%-lk}-${pkgver}.tar.xz"
+    'PR10266-dynamically-allocate-the-alternate-signal-stack.patch')
+sha512sums=('ead6de8813c86a106f51cd9542d8076c8c21eb7885940313b8cbd21f5c32cf0f663fe871054e3b56bf0eeda848637233c42859f7cc76472fa8db1eac7be50bc4'
+    '539d5da383c18c2769e27e394237d7c9a566ea2db5127b57e9e28c7c0a4801d3fb048b5e325675db5b6ce28d1032fb314e537b395f742b1790bfd8456059a03a')
 options=('!makeflags' '!emptydirs' 'staticlibs')
 
 build() {
     cd "${srcdir}/${pkgbase%-lk}-${pkgver}"
+    CFLAGS+=' -ffat-lto-objects'
+    CXXFLAGS+=' -ffat-lto-objects'
+    # Backport glibc 2.34+ patch from https://github.com/ocaml/ocaml/pull/10266
+    patch -p1 <"${srcdir}/PR10266-dynamically-allocate-the-alternate-signal-stack.patch"
     ./configure --prefix /usr --mandir /usr/share/man --disable-force-safe-string
     make --debug=v world.opt
 }
@@ -31,8 +37,8 @@ package_ocaml-lk() {
     #find "${pkgdir}/usr/lib" -type f -name '*.so.*' -exec strip --strip-unneeded {} \;
 
     # install license
-    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
-    install -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname%-lk}"
+    install -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname%-lk}/"
 
     # remove compiler libs
     rm -rf "${pkgdir}/usr/lib/ocaml/compiler-libs"
@@ -41,9 +47,9 @@ package_ocaml-lk() {
 package_ocaml-compiler-libs-lk() {
     pkgdesc="Several modules used internally by the OCaml compiler"
     license=('custom: QPL-1.0')
-    depends=("ocaml-lk=${pkgver}")
+    depends=('ocaml-lk')
     optdepends=()
-    provides=("ocaml-compiler-libs=${pkgver}")
+    provides=('ocaml-compiler-libs')
     conflicts=('ocaml-compiler-libs')
 
     cd "${srcdir}/${pkgbase%-lk}-${pkgver}"
@@ -54,6 +60,6 @@ package_ocaml-compiler-libs-lk() {
         "${pkgdir}/usr/lib/ocaml/threads" "${pkgdir}/usr/share"
     find "${pkgdir}/usr/lib/ocaml/" -maxdepth 1 -type f -delete
 
-    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname}"
-    install -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/"
+    install -m755 -d "${pkgdir}/usr/share/licenses/${pkgname%-lk}"
+    install -m644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname%-lk}/"
 }

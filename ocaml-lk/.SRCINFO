@@ -1,6 +1,6 @@
 pkgbase = ocaml-lk
 	pkgdesc = A functional language with OO extensions
-	pkgver = 4.12.0
+	pkgver = 4.12.1
 	pkgrel = 1
 	url = https://caml.inria.fr/
 	arch = x86_64
@@ -9,21 +9,22 @@ pkgbase = ocaml-lk
 	makedepends = ncurses
 	optdepends = ncurses: advanced ncurses features
 	optdepends = tk: advanced tk features
-	provides = ocaml=4.12.0
+	provides = ocaml
 	conflicts = ocaml
 	options = !makeflags
 	options = !emptydirs
 	options = staticlibs
-	source = https://caml.inria.fr/distrib/ocaml-4.12/ocaml-4.12.0.tar.xz
-	sha512sums = fff347398300097e32dcdd0fabfa158693e3d27d4b0fef23a564be4993950be374e3e436205e621485f4188ab007e489c50b1294e1999dac36312e56ec5b52c9
+	source = https://caml.inria.fr/distrib/ocaml-4.12/ocaml-4.12.1.tar.xz
+	source = PR10266-dynamically-allocate-the-alternate-signal-stack.patch
+	sha512sums = ead6de8813c86a106f51cd9542d8076c8c21eb7885940313b8cbd21f5c32cf0f663fe871054e3b56bf0eeda848637233c42859f7cc76472fa8db1eac7be50bc4
+	sha512sums = 539d5da383c18c2769e27e394237d7c9a566ea2db5127b57e9e28c7c0a4801d3fb048b5e325675db5b6ce28d1032fb314e537b395f742b1790bfd8456059a03a
 
 pkgname = ocaml-lk
 
 pkgname = ocaml-compiler-libs-lk
 	pkgdesc = Several modules used internally by the OCaml compiler
 	license = custom: QPL-1.0
-	depends = ocaml-lk=4.12.0
+	depends = ocaml-lk
 	optdepends = 
-	provides = ocaml-compiler-libs=4.12.0
+	provides = ocaml-compiler-libs
 	conflicts = ocaml-compiler-libs
-

@@ -1,0 +1,48 @@
+#Maintainer: Juergen Hoetzel <juergen@archlinux.org>
+
+pkgname=lablgtk2-lk
+_pkgname=${pkgname%-lk}
+pkgver=2.18.12
+pkgrel=1
+pkgdesc="An Objective Caml interface to gtk2"
+arch=(x86_64)
+license=('LGPL')
+url="http://lablgtk.forge.ocamlcore.org/"
+depends=('gtk2' 'librsvg')
+makedepends=('ocaml-compiler-libs-lk' 'camlp5-lk')
+optdepends=('ocaml-lk: for using the tools')
+provides=("${_pkgname}")
+conflicts=("${_pkgname}")
+source=("${_pkgname}-${pkgver}.tar.gz::https://github.com/garrigue/lablgtk/archive/${pkgver}.tar.gz" gcc10.patch)
+sha512sums=('284a1234ae817c4df49809d28c103ca5e64046da5ec9ff28c6edc0ce999e9d3e6e180dd053f8b1663d4fb3b7ba19570d53b9441c8fa622add924e8d85e41b813'
+  '0fcb9f333101c5ab04dde1729a9c9805e422f100f79ad8014a3cd8c5cb78d19344292e334d4cc70d3614a41a4e143a30cd707b67a8443fa8b6f8c8fc9d7f27d9')
+options=(!makeflags staticlibs !lto)
+
+prepare() {
+  cd "${srcdir}/lablgtk-${pkgver}/src"
+  patch -p0 -i "${srcdir}/gcc10.patch"
+}
+
+build() {
+  cd "${srcdir}/lablgtk-${pkgver}"
+  ./configure --prefix=/usr \
+    --without-gnomeui \
+    --without-gnomecanvas \
+    --without-panel \
+    --without-gtkspell \
+    --without-gtksourceview \
+    --without-gtksourceview2 \
+    --without-glade
+  sed -e "s|-O|$CFLAGS|" \
+    -e "s|-shared|& -ccopt \"$LDFLAGS\"|" \
+    -e "s|(CAMLMKLIB)|& -ldopt \"$LDFLAGS\"|" \
+    -i src/Makefile
+  make world
+  make opt
+}
+
+package() {
+  cd "${srcdir}/lablgtk-${pkgver}"
+  make DESTDIR="${pkgdir}" old-install
+  install -m644 META "${pkgdir}/usr/lib/ocaml/lablgtk2/"
+}
